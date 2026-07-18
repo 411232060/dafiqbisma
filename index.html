@@ -1,0 +1,363 @@
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import {
+  Hospital, Phone, Mail, MapPin, Clock, ChevronRight, Star, HeartPulse, X
+} from "lucide-react";
+
+const layanan = [
+  {
+    nama: "Poli Umum",
+    foto: "https://images.unsplash.com/photo-1758691462878-6edc3d3da1be?w=400&h=240&fit=crop&auto=format",
+    desc: "Pemeriksaan kesehatan umum untuk semua usia",
+    detail: "Melayani pemeriksaan fisik rutin, penanganan keluhan umum seperti demam, flu, dan batuk, serta rujukan ke spesialis jika diperlukan. Tersedia setiap hari Senin–Sabtu pukul 08.00–16.00.",
+  },
+  {
+    nama: "Poli Anak",
+    foto: "https://images.unsplash.com/photo-1758691462126-2ee47c8bf9e7?w=400&h=240&fit=crop&auto=format",
+    desc: "Perawatan khusus kesehatan bayi dan anak",
+    detail: "Menangani tumbuh kembang anak, imunisasi, penyakit infeksi anak, serta konsultasi nutrisi bayi dan balita bersama dokter spesialis anak berpengalaman.",
+  },
+  {
+    nama: "Poli Gigi",
+    foto: "https://images.unsplash.com/photo-1606811971618-4486d14f3f99?w=400&h=240&fit=crop&auto=format",
+    desc: "Perawatan gigi dan kesehatan mulut",
+    detail: "Melayani penambalan gigi, pencabutan, pembersihan karang gigi, perawatan saluran akar, serta konsultasi estetika gigi oleh dokter gigi profesional.",
+  },
+  {
+    nama: "Poli Mata",
+    foto: "https://images.unsplash.com/photo-1539036776273-021ec1d78bec?w=400&h=240&fit=crop&auto=format",
+    desc: "Pemeriksaan dan perawatan kesehatan mata",
+    detail: "Pemeriksaan visus, deteksi glaukoma dan katarak, penanganan iritasi mata, serta resep kacamata dan lensa kontak oleh dokter spesialis mata.",
+  },
+  {
+    nama: "Poli Penyakit Dalam",
+    foto: "https://images.unsplash.com/photo-1584432810601-6c7f27d2362b?w=400&h=240&fit=crop&auto=format",
+    desc: "Penanganan penyakit internal dan kronis",
+    detail: "Menangani diabetes, hipertensi, penyakit jantung, gangguan pencernaan, dan penyakit kronis lainnya dengan pendekatan holistik oleh dokter spesialis penyakit dalam.",
+  },
+  {
+    nama: "Poli Kandungan",
+    foto: "https://images.unsplash.com/photo-1632053652571-a6a45052bbbd?w=400&h=240&fit=crop&auto=format",
+    desc: "Pelayanan kebidanan dan kandungan",
+    detail: "Pemeriksaan kehamilan rutin, USG kandungan, penanganan gangguan reproduksi, serta persalinan normal dan caesar oleh dokter spesialis obstetri dan ginekologi.",
+  },
+];
+
+const dokter = [
+  { nama: "dr. Ahmad Fauzi, Sp.PD", spesialisasi: "Penyakit Dalam", hari: "Senin & Rabu", jam: "08.00 – 12.00", poli: "Poli Penyakit Dalam", foto: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=120&h=120&fit=crop" },
+  { nama: "dr. Siti Rahayu, Sp.A", spesialisasi: "Anak", hari: "Selasa & Kamis", jam: "08.00 – 12.00", poli: "Poli Anak", foto: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=120&h=120&fit=crop" },
+  { nama: "dr. Budi Santoso, drg", spesialisasi: "Gigi", hari: "Senin & Jumat", jam: "10.00 – 14.00", poli: "Poli Gigi", foto: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=120&h=120&fit=crop" },
+  { nama: "dr. Dewi Kusuma, Sp.M", spesialisasi: "Mata", hari: "Rabu & Sabtu", jam: "08.00 – 12.00", poli: "Poli Mata", foto: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=120&h=120&fit=crop" },
+];
+
+const navLinks = [
+  { label: "Beranda", href: "#beranda" },
+  { label: "Tentang", href: "#tentang" },
+  { label: "Layanan", href: "#layanan" },
+  { label: "Dokter", href: "#dokter" },
+  { label: "Kontak", href: "#kontak" },
+];
+
+const scrollTo = (href: string) => {
+  const el = document.querySelector(href);
+  if (el) el.scrollIntoView({ behavior: "smooth" });
+};
+
+type DokterType = typeof dokter[number];
+type LayananType = typeof layanan[number];
+
+export default function Home() {
+  const [jadwalModal, setJadwalModal] = useState<DokterType | null>(null);
+  const [layananModal, setLayananModal] = useState<LayananType | null>(null);
+
+  return (
+    <div className="min-h-screen bg-white font-[Inter]">
+      <nav className="bg-white/95 backdrop-blur-sm border-b border-blue-50 sticky top-0 z-40 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <button onClick={() => scrollTo("#beranda")} className="flex items-center gap-2.5">
+              <div className="w-9 h-9 bg-blue-700 rounded-xl flex items-center justify-center">
+                <Hospital size={20} className="text-white" />
+              </div>
+              <div className="text-left">
+                <p className="font-bold text-blue-900 text-sm leading-tight">Medika Hospital</p>
+                <p className="text-blue-400 text-xs leading-tight">Pelayanan Kesehatan Terpadu</p>
+              </div>
+            </button>
+            <div className="hidden lg:flex items-center gap-6">
+              {navLinks.map((link) => (
+                <button key={link.label} onClick={() => scrollTo(link.href)} className="text-sm text-gray-600 hover:text-blue-700 font-medium transition-colors">{link.label}</button>
+              ))}
+            </div>
+            <Link to="/login" className="bg-blue-700 hover:bg-blue-800 text-white text-sm font-semibold px-5 py-2 rounded-xl transition-colors">
+              Login
+            </Link>
+          </div>
+        </div>
+      </nav>
+
+      <section id="beranda" className="relative bg-gradient-to-br from-[#0f2040] via-[#1e3a8a] to-[#1d4ed8] min-h-[85vh] flex items-center overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-20 right-20 w-96 h-96 bg-blue-300 rounded-full blur-3xl" />
+          <div className="absolute bottom-10 left-10 w-64 h-64 bg-indigo-400 rounded-full blur-3xl" />
+        </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 relative z-10">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div>
+              <div className="inline-flex items-center gap-2 bg-white/10 text-blue-200 text-xs font-semibold px-3 py-1.5 rounded-full mb-6 border border-white/10">
+                <Star size={12} />
+                Rumah Sakit Terpercaya Sejak 2005
+              </div>
+              <h1 className="text-4xl lg:text-5xl font-bold text-white leading-tight mb-6">
+                Pelayanan Kesehatan<br />
+                <span className="text-blue-300">Terpadu untuk Anda</span><br />
+                dan Keluarga
+              </h1>
+              <p className="text-blue-100 text-lg leading-relaxed mb-8 max-w-md">
+                Medika Hospital memberikan pelayanan kesehatan terbaik dengan tenaga medis berpengalaman dan fasilitas modern berstandar internasional.
+              </p>
+              <div className="flex flex-wrap gap-4">
+                <a href="#layanan" className="bg-white text-blue-900 font-semibold px-6 py-3 rounded-xl hover:bg-blue-50 transition-colors flex items-center gap-2">
+                  Lihat Layanan <ChevronRight size={16} />
+                </a>
+                <Link to="/login" className="border border-white/30 text-white font-semibold px-6 py-3 rounded-xl hover:bg-white/10 transition-colors">
+                  Login Petugas
+                </Link>
+              </div>
+              <div className="mt-12 grid grid-cols-3 gap-6">
+                {[["50+", "Dokter Spesialis"], ["20+", "Tahun Pengalaman"], ["100rb+", "Pasien Terlayani"]].map(([num, label]) => (
+                  <div key={label}>
+                    <p className="text-3xl font-bold text-white">{num}</p>
+                    <p className="text-blue-200 text-sm">{label}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="hidden lg:block">
+              <div className="relative">
+                <img
+                  src="https://images.unsplash.com/photo-1586773860418-d37222d8fce3?w=600&h=500&fit=crop&auto=format"
+                  alt="Rumah sakit modern"
+                  className="rounded-3xl shadow-2xl w-full object-cover h-[450px]"
+                />
+                <div className="absolute -bottom-6 -left-6 bg-white rounded-2xl p-4 shadow-xl flex items-center gap-3">
+                  <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                    <HeartPulse className="text-green-600" size={24} />
+                  </div>
+                  <div>
+                    <p className="font-bold text-gray-900 text-sm">Layanan 24 Jam</p>
+                    <p className="text-gray-500 text-xs">IGD selalu siap</p>
+                  </div>
+                </div>
+                <div className="absolute -top-4 -right-4 bg-blue-600 rounded-2xl p-4 shadow-xl text-white text-center">
+                  <p className="text-2xl font-bold">98%</p>
+                  <p className="text-blue-100 text-xs">Kepuasan Pasien</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="tentang" className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div>
+              <p className="text-blue-600 font-semibold text-sm mb-2">Tentang Kami</p>
+              <h2 className="text-3xl font-bold text-gray-900 mb-5">Rumah Sakit Terpercaya Sejak 2005</h2>
+              <p className="text-gray-500 leading-relaxed mb-4">Medika Hospital adalah rumah sakit umum swasta yang berdiri sejak tahun 2005 dengan visi menjadi pusat layanan kesehatan terdepan di Indonesia. Kami berkomitmen memberikan pelayanan medis berkualitas tinggi yang terjangkau bagi seluruh lapisan masyarakat.</p>
+              <p className="text-gray-500 leading-relaxed mb-6">Dengan fasilitas modern dan tim dokter spesialis berpengalaman, kami siap melayani kebutuhan kesehatan Anda dan keluarga dengan standar internasional.</p>
+              <div className="grid grid-cols-3 gap-4">
+                {[["50+", "Dokter Spesialis"], ["200+", "Tempat Tidur"], ["98%", "Kepuasan Pasien"]].map(([num, label]) => (
+                  <div key={label} className="bg-blue-50 rounded-2xl p-4 text-center">
+                    <p className="text-2xl font-bold text-blue-700">{num}</p>
+                    <p className="text-xs text-gray-500 mt-0.5">{label}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div>
+              <img src="https://images.unsplash.com/photo-1516549655169-df83a0774514?w=600&h=420&fit=crop&auto=format" alt="Rumah sakit modern" className="rounded-3xl shadow-xl w-full object-cover" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="layanan" className="py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-14">
+            <p className="text-blue-600 font-semibold text-sm mb-2">Layanan Kami</p>
+            <h2 className="text-3xl font-bold text-gray-900 mb-3">Poliklinik Unggulan</h2>
+            <p className="text-gray-500 max-w-lg mx-auto">Kami menyediakan berbagai poliklinik dengan dokter spesialis berpengalaman untuk menangani berbagai kebutuhan kesehatan Anda.</p>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {layanan.map((item) => (
+              <div key={item.nama} className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-all border border-gray-100 group cursor-pointer overflow-hidden">
+                <div className="h-44 bg-gray-100 overflow-hidden">
+                  <img
+                    src={item.foto}
+                    alt={item.nama}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+                <div className="p-5">
+                  <h3 className="font-semibold text-gray-900 mb-1.5">{item.nama}</h3>
+                  <p className="text-gray-500 text-sm leading-relaxed">{item.desc}</p>
+                  <button
+                    onClick={() => setLayananModal(item)}
+                    className="mt-4 flex items-center gap-1 text-blue-600 text-sm font-medium group-hover:gap-2 transition-all hover:underline"
+                  >
+                    Selengkapnya <ChevronRight size={14} />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="dokter" className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-14">
+            <p className="text-blue-600 font-semibold text-sm mb-2">Tim Medis</p>
+            <h2 className="text-3xl font-bold text-gray-900 mb-3">Dokter Kami</h2>
+            <p className="text-gray-500 max-w-lg mx-auto">Tim dokter spesialis kami siap memberikan pelayanan terbaik dengan dedikasi dan profesionalisme tinggi.</p>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {dokter.map((d) => (
+              <div key={d.nama} className="text-center group">
+                <div className="relative inline-block mb-4">
+                  <img
+                    src={d.foto}
+                    alt={d.nama}
+                    className="w-28 h-28 rounded-2xl object-cover mx-auto shadow-md group-hover:shadow-lg transition-shadow"
+                  />
+                  <div className="absolute -bottom-2 -right-2 w-7 h-7 bg-green-500 rounded-full border-2 border-white flex items-center justify-center">
+                    <div className="w-2 h-2 bg-white rounded-full" />
+                  </div>
+                </div>
+                <h3 className="font-semibold text-gray-900 text-sm mb-1">{d.nama}</h3>
+                <p className="text-blue-600 text-xs font-medium mb-1">{d.spesialisasi}</p>
+                <p className="text-gray-400 text-xs mb-3">{d.hari}</p>
+                <button
+                  onClick={() => setJadwalModal(d)}
+                  className="text-xs border border-blue-200 text-blue-600 px-4 py-1.5 rounded-full hover:bg-blue-50 transition-colors font-medium"
+                >
+                  Lihat Jadwal
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="kontak" className="py-20 bg-gradient-to-br from-blue-700 to-blue-900 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div>
+              <p className="text-blue-200 font-semibold text-sm mb-2">Informasi</p>
+              <h2 className="text-3xl font-bold mb-8">Hubungi Kami</h2>
+              <div className="space-y-6">
+                {[
+                  { icon: MapPin, label: "Alamat", value: "Jl. Raya Kesehatan No. 1, Jakarta Pusat 10110" },
+                  { icon: Phone, label: "Telepon", value: "(021) 5555-1234 / (021) 5555-5678" },
+                  { icon: Mail, label: "Email", value: "info@medikahospital.com" },
+                  { icon: Clock, label: "Jam Operasional", value: "Senin–Sabtu: 07.00–21.00 | IGD: 24 Jam" },
+                ].map(({ icon: Icon, label, value }) => (
+                  <div key={label} className="flex items-start gap-4">
+                    <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <Icon size={18} className="text-blue-200" />
+                    </div>
+                    <div>
+                      <p className="text-blue-200 text-xs font-medium mb-0.5">{label}</p>
+                      <p className="text-white font-medium">{value}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="bg-white/10 rounded-3xl p-8 border border-white/20">
+              <h3 className="font-bold text-xl mb-6">Kirim Pesan</h3>
+              <div className="space-y-4">
+                <input type="text" placeholder="Nama Lengkap" className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-blue-200 text-sm focus:outline-none focus:border-white/40" />
+                <input type="email" placeholder="Alamat Email" className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-blue-200 text-sm focus:outline-none focus:border-white/40" />
+                <textarea rows={4} placeholder="Pesan Anda..." className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-blue-200 text-sm focus:outline-none focus:border-white/40 resize-none" />
+                <button className="w-full bg-white text-blue-900 font-semibold py-3 rounded-xl hover:bg-blue-50 transition-colors">
+                  Kirim Pesan
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {layananModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/50" onClick={() => setLayananModal(null)} />
+          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+            <div className="h-52 bg-gray-100 overflow-hidden">
+              <img src={layananModal.foto} alt={layananModal.nama} className="w-full h-full object-cover" />
+            </div>
+            <button onClick={() => setLayananModal(null)} className="absolute top-3 right-3 p-1.5 rounded-full bg-black/30 hover:bg-black/50 transition-colors">
+              <X size={16} className="text-white" />
+            </button>
+            <div className="p-6">
+              <h3 className="text-xl font-bold text-gray-900 mb-3">{layananModal.nama}</h3>
+              <p className="text-gray-600 text-sm leading-relaxed mb-5">{layananModal.detail}</p>
+              <button
+                onClick={() => { setLayananModal(null); scrollTo("#kontak"); }}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition-colors text-sm"
+              >
+                Hubungi Kami untuk Informasi Lebih Lanjut
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {jadwalModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/50" onClick={() => setJadwalModal(null)} />
+          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6">
+            <button onClick={() => setJadwalModal(null)} className="absolute top-4 right-4 p-1.5 rounded-lg hover:bg-gray-100 transition-colors">
+              <X size={18} className="text-gray-500" />
+            </button>
+            <div className="flex items-center gap-4 mb-5">
+              <img src={jadwalModal.foto} alt={jadwalModal.nama} className="w-16 h-16 rounded-xl object-cover bg-gray-100" />
+              <div>
+                <h3 className="font-bold text-gray-900 text-sm leading-tight">{jadwalModal.nama}</h3>
+                <p className="text-blue-600 text-xs font-medium mt-0.5">{jadwalModal.spesialisasi}</p>
+                <p className="text-gray-400 text-xs">{jadwalModal.poli}</p>
+              </div>
+            </div>
+            <div className="bg-blue-50 rounded-xl p-4 space-y-3">
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Jadwal Praktik</p>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-sm text-gray-700">
+                  <Clock size={14} className="text-blue-500" />
+                  <span className="font-medium">{jadwalModal.hari}</span>
+                </div>
+                <span className="text-sm font-semibold text-blue-700">{jadwalModal.jam}</span>
+              </div>
+            </div>
+            <p className="text-xs text-gray-400 mt-4 text-center">Pendaftaran dapat dilakukan langsung ke loket atau melalui sistem oleh petugas.</p>
+          </div>
+        </div>
+      )}
+
+      <footer className="bg-[#0f2040] text-white py-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 bg-blue-600 rounded-xl flex items-center justify-center">
+                <Hospital size={16} className="text-white" />
+              </div>
+              <p className="font-bold text-sm">Medika Hospital Management System</p>
+            </div>
+            <p className="text-gray-400 text-sm">© 2024 Medika Hospital. Hak cipta dilindungi undang-undang.</p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
